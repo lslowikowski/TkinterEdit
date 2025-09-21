@@ -22,13 +22,7 @@ class Workspace(tk.Frame):
         #w zależności od typu komponentu tworzymy odpowiednie widgety z domyślnymi parametrmi
         if widget_type == "Label":
             widget = tk.Label(self, text="Nowy Label", bg="lightyellow")
-            widget.controller = self.controller
-            widget._grid_row = 0
-            widget._grid_column = 0
-            widget._grid_rowspan = 1
-            widget._grid_columnspan = 1
-            widget._grid_sticky = ""
-            widget._parent_name = "Workspace"
+            self.widget_initial_set(widget)
 
             # Dodanie nowego widgetu do interfejsu
             widget.pack(pady=5)
@@ -40,13 +34,7 @@ class Workspace(tk.Frame):
 
         elif widget_type == "Button":
             widget = tk.Button(self, text="Nowy Button")
-            widget.controller = self.controller
-            widget._grid_row = 0
-            widget._grid_column = 0
-            widget._grid_rowspan = 1
-            widget._grid_columnspan = 1
-            widget._grid_sticky = ""
-            widget._parent_name = "Workspace"
+            self.widget_initial_set(widget)
 
             # Dodanie nowego widgetu do interfejsu
             widget.pack(pady=5)
@@ -58,13 +46,7 @@ class Workspace(tk.Frame):
 
         elif widget_type == "Entry":
             widget = tk.Entry(self)
-            widget.controller = self.controller
-            widget._grid_row = 0
-            widget._grid_column = 0
-            widget._grid_rowspan = 1
-            widget._grid_columnspan = 1
-            widget._grid_sticky = ""
-            widget._parent_name = "Workspace"
+            self.widget_initial_set(widget)
 
             # Dodanie nowego widgetu do interfejsu
             widget.pack(pady=5)
@@ -77,13 +59,7 @@ class Workspace(tk.Frame):
         elif widget_type == "Checkbutton":
             var = tk.BooleanVar(value=False)
             widget = tk.Checkbutton(self, text="Opcja", variable=var)
-            widget.controller = self.controller
-            widget._grid_row = 0
-            widget._grid_column = 0
-            widget._grid_rowspan = 1
-            widget._grid_columnspan = 1
-            widget._grid_sticky = ""
-            widget._parent_name = "Workspace"
+            self.widget_initial_set(widget)
 
             # zapisz zmienną przechowującą stan (on/off) w obiekcie widgetu
             widget._linked_var = var
@@ -97,13 +73,7 @@ class Workspace(tk.Frame):
 
         elif widget_type == "Radiobutton":
             widget = tk.Radiobutton(self, text="Opcja", value="Opcja")
-            widget.controller = self.controller
-            widget._grid_row = 0
-            widget._grid_column = 0
-            widget._grid_rowspan = 1
-            widget._grid_columnspan = 1
-            widget._grid_sticky = ""
-            widget._parent_name = "Workspace"
+            self.widget_initial_set(widget)
 
             widget._linked_var = tk.StringVar()
             widget.config(variable=widget._linked_var)
@@ -114,13 +84,7 @@ class Workspace(tk.Frame):
 
         elif widget_type == "Frame":
             widget = tk.Frame(self, bg="lightgray", bd=2, relief="groove", width=200, height=100)
-            widget.controller = self.controller
-            widget._grid_row = 0
-            widget._grid_column = 0
-            widget._grid_rowspan = 1
-            widget._grid_columnspan = 1
-            widget._grid_sticky = ""
-            widget._parent_name = "Workspace"
+            self.widget_initial_set(widget)
 
             widget.pack_propagate(False)  # ← zapobiega automatycznemu dopasowaniu do zawartości
 
@@ -134,13 +98,7 @@ class Workspace(tk.Frame):
 
         elif widget_type == "LabelFrame":
             widget = tk.LabelFrame(self, text="Grupa", bg="lightgray", bd=2, relief="ridge", width=200, height=100)
-            widget.controller = self.controller
-            widget._grid_row = 0
-            widget._grid_column = 0
-            widget._grid_rowspan = 1
-            widget._grid_columnspan = 1
-            widget._grid_sticky = ""
-            widget._parent_name = "Workspace"
+            self.widget_initial_set(widget)
 
             widget.pack_propagate(False)
 
@@ -154,6 +112,15 @@ class Workspace(tk.Frame):
 
         else:
             return  # nieobsługiwany typ
+
+    def widget_initial_set(self, widget):
+        widget.controller = self.controller
+        widget._grid_row = 0
+        widget._grid_column = 0
+        widget._grid_rowspan = 1
+        widget._grid_columnspan = 1
+        widget._grid_sticky = ""
+        widget._parent_name = "Workspace"
 
     def select_widget(self, widget):
         '''Obsługa zdarzenia kliknięcia na widget
