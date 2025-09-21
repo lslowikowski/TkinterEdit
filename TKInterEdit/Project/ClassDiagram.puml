@@ -1,0 +1,56 @@
+@startuml EdytorGUI
+
+class AppController {
+    +workspace: Workspace
+    +toolbox: Toolbox
+    +properties: PropertiesPanel
+    +widget_manager: WidgetManager
+    +code_generator: CodeGenerator
+    +run()
+}
+
+class Toolbox {
+    +controller: AppController
+    +show()
+    +select_widget(type)
+}
+
+class Workspace {
+    +controller: AppController
+    +add_widget(type)
+    +update_widget_property(id, key, value)
+    +get_selected_widget()
+}
+
+class PropertiesPanel {
+    +controller: AppController
+    +display_properties(widget_id)
+    +apply_changes(widget_id, properties)
+}
+
+class WidgetManager {
+    +widgets: dict
+    +generate_id(type)
+    +get_widget(id)
+    +set_property(id, key, value)
+}
+
+class CodeGenerator {
+    +controller: AppController
+    +export_to_python()
+    +export_to_json()
+}
+
+AppController --> Toolbox
+AppController --> Workspace
+AppController --> PropertiesPanel
+AppController --> WidgetManager
+AppController --> CodeGenerator
+
+Toolbox --> Workspace : add_widget(type)
+PropertiesPanel --> Workspace : get_selected_widget()
+PropertiesPanel --> WidgetManager : set_property()
+Workspace --> WidgetManager : generate_id(), get_widget()
+CodeGenerator --> WidgetManager : widgets
+
+@enduml
