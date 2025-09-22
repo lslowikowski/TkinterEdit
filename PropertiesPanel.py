@@ -43,6 +43,8 @@ class PropertiesPanel(tk.Toplevel):
         widget_type = type(widget).__name__  #ustawienie typu widgetu
         # pobranie do zmiennej props jsona z listą właściwości konkretnego typu widgetu
         props = WIDGET_PROPERTIES.get(widget_type, {})
+        common = WIDGET_PROPERTIES.get("Common", {})
+        props.update(common)
 
         #wyświetlamy właściwość po właściwości w okienku
         for prop_name, config in props.items():

@@ -3,18 +3,16 @@
 import tkinter as tk
 
 WIDGET_PROPERTIES = {
-    "Label": {
-        "text": {"type": "entry", "getter": lambda w: w.cget("text"), "setter": lambda w, v: w.config(text=v)},
-        "bg": {"type": "entry", "getter": lambda w: w.cget("bg"), "setter": lambda w, v: w.config(bg=v)},
+    "Common":{
         "grid_row": {
             "type": "entry",
             "getter": lambda w: getattr(w, "_grid_row", 0),
             "setter": lambda w, v: setattr(w, "_grid_row", int(v))
         },
         "grid_column": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_column", 0),
-            "setter": lambda w, v: setattr(w, "_grid_column", int(v))
+                "type": "entry",
+                "getter": lambda w: getattr(w, "_grid_column", 0),
+                "setter": lambda w, v: setattr(w, "_grid_column", int(v))
         },
         "grid_rowspan": {
             "type": "entry",
@@ -37,79 +35,19 @@ WIDGET_PROPERTIES = {
             "setter": lambda w, v: w.controller.workspace.reparent_widget(w, v),
             "options": lambda w: [getattr(c, "_name", "Workspace") for c in w.controller.workspace.containers]
         }
-
+    },
+    "Label": {
+        "text": {"type": "entry", "getter": lambda w: w.cget("text"), "setter": lambda w, v: w.config(text=v)},
+        "bg": {"type": "entry", "getter": lambda w: w.cget("bg"), "setter": lambda w, v: w.config(bg=v)}
     },
     "Button": {
         "text": {"type": "entry", "getter": lambda w: w.cget("text"), "setter": lambda w, v: w.config(text=v)},
-        "fg": {"type": "entry", "getter": lambda w: w.cget("fg"), "setter": lambda w, v: w.config(fg=v)},
-        "grid_row": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_row", 0),
-            "setter": lambda w, v: setattr(w, "_grid_row", int(v))
-        },
-        "grid_column": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_column", 0),
-            "setter": lambda w, v: setattr(w, "_grid_column", int(v))
-        },
-        "grid_rowspan": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_rowspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_rowspan", int(v))
-        },
-        "grid_columnspan": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_columnspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_columnspan", int(v))
-        },
-        "grid_sticky": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_sticky", ""),
-            "setter": lambda w, v: setattr(w, "_grid_sticky", v)
-        },
-        "Parent": {
-            "type": "dropdown",
-            "getter": lambda w: getattr(w, "_parent_name", "Workspace"),
-            "setter": lambda w, v: w.controller.workspace.reparent_widget(w, v),
-            "options": lambda w: [getattr(c, "_name", "Workspace") for c in w.controller.workspace.containers]
-        }
+        "fg": {"type": "entry", "getter": lambda w: w.cget("fg"), "setter": lambda w, v: w.config(fg=v)}
 
     },
     "Entry": {
         "value": {"type": "entry", "getter": lambda w: w.get(),
-                  "setter": lambda w, v: (w.delete(0, tk.END), w.insert(0, v))},
-        "grid_row": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_row", 0),
-            "setter": lambda w, v: setattr(w, "_grid_row", int(v))
-        },
-        "grid_column": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_column", 0),
-            "setter": lambda w, v: setattr(w, "_grid_column", int(v))
-        },
-        "grid_rowspan": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_rowspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_rowspan", int(v))
-        },
-        "grid_columnspan": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_columnspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_columnspan", int(v))
-        },
-        "grid_sticky": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_sticky", ""),
-            "setter": lambda w, v: setattr(w, "_grid_sticky", v)
-        },
-        "Parent": {
-            "type": "dropdown",
-            "getter": lambda w: getattr(w, "_parent_name", "Workspace"),
-            "setter": lambda w, v: w.controller.workspace.reparent_widget(w, v),
-            "options": lambda w: [getattr(c, "_name", "Workspace") for c in w.controller.workspace.containers]
-        }
-
+                  "setter": lambda w, v: (w.delete(0, tk.END), w.insert(0, v))}
     },
     "Checkbutton": {
         "text": {
@@ -121,39 +59,7 @@ WIDGET_PROPERTIES = {
             "type": "checkbox",
             "getter": lambda w: w._linked_var.get(),
             "setter": lambda w, v: w._linked_var.set(bool(int(v)))
-        },
-        "grid_row": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_row", 0),
-            "setter": lambda w, v: setattr(w, "_grid_row", int(v))
-        },
-        "grid_column": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_column", 0),
-            "setter": lambda w, v: setattr(w, "_grid_column", int(v))
-        },
-        "grid_rowspan": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_rowspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_rowspan", int(v))
-        },
-        "grid_columnspan": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_columnspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_columnspan", int(v))
-        },
-        "grid_sticky": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_sticky", ""),
-            "setter": lambda w, v: setattr(w, "_grid_sticky", v)
-        },
-        "Parent": {
-            "type": "dropdown",
-            "getter": lambda w: getattr(w, "_parent_name", "Workspace"),
-            "setter": lambda w, v: w.controller.workspace.reparent_widget(w, v),
-            "options": lambda w: [getattr(c, "_name", "Workspace") for c in w.controller.workspace.containers]
         }
-
     },
     "Frame": {
         "width": {
@@ -165,39 +71,7 @@ WIDGET_PROPERTIES = {
             "type": "entry",
             "getter": lambda w: w.winfo_height(),
             "setter": lambda w, v: w.config(height=int(v))
-        },
-        "grid_row": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_row", 0),
-            "setter": lambda w, v: setattr(w, "_grid_row", int(v))
-        },
-        "grid_column": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_column", 0),
-            "setter": lambda w, v: setattr(w, "_grid_column", int(v))
-        },
-        "grid_rowspan": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_rowspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_rowspan", int(v))
-        },
-        "grid_columnspan": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_columnspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_columnspan", int(v))
-        },
-        "grid_sticky": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_sticky", ""),
-            "setter": lambda w, v: setattr(w, "_grid_sticky", v)
-        },
-        "Parent": {
-            "type": "dropdown",
-            "getter": lambda w: getattr(w, "_parent_name", "Workspace"),
-            "setter": lambda w, v: w.controller.workspace.reparent_widget(w, v),
-            "options": lambda w: [getattr(c, "_name", "Workspace") for c in w.controller.workspace.containers]
         }
-
     },
     "Radiobutton": {
         "text": {
@@ -214,39 +88,7 @@ WIDGET_PROPERTIES = {
             "type": "entry",
             "getter": lambda w: getattr(w._linked_var, "name", ""),
             "setter": lambda w, v: w.controller.workspace.assign_group_variable(w, v)
-        },
-        "grid_row": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_row", 0),
-            "setter": lambda w, v: setattr(w, "_grid_row", int(v))
-        },
-        "grid_column": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_column", 0),
-            "setter": lambda w, v: setattr(w, "_grid_column", int(v))
-        },
-        "grid_rowspan": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_rowspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_rowspan", int(v))
-        },
-        "grid_columnspan": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_columnspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_columnspan", int(v))
-        },
-        "grid_sticky": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_sticky", ""),
-            "setter": lambda w, v: setattr(w, "_grid_sticky", v)
-        },
-        "Parent": {
-            "type": "dropdown",
-            "getter": lambda w: getattr(w, "_parent_name", "Workspace"),
-            "setter": lambda w, v: w.controller.workspace.reparent_widget(w, v),
-            "options": lambda w: [getattr(c, "_name", "Workspace") for c in w.controller.workspace.containers]
         }
-
     },
     "Parent": {
         "type": "dropdown",
@@ -269,39 +111,7 @@ WIDGET_PROPERTIES = {
             "type": "entry",
             "getter": lambda w: w.winfo_height(),
             "setter": lambda w, v: w.config(height=int(v))
-        },
-        "grid_row": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_row", 0),
-            "setter": lambda w, v: setattr(w, "_grid_row", int(v))
-        },
-        "grid_column": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_column", 0),
-            "setter": lambda w, v: setattr(w, "_grid_column", int(v))
-        },
-        "grid_rowspan": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_rowspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_rowspan", int(v))
-        },
-        "grid_columnspan": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_columnspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_columnspan", int(v))
-        },
-        "grid_sticky": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_sticky", ""),
-            "setter": lambda w, v: setattr(w, "_grid_sticky", v)
-        },
-        "Parent": {
-            "type": "dropdown",
-            "getter": lambda w: getattr(w, "_parent_name", "Workspace"),
-            "setter": lambda w, v: w.controller.workspace.reparent_widget(w, v),
-            "options": lambda w: [getattr(c, "_name", "Workspace") for c in w.controller.workspace.containers]
         }
-
     }
 
 }
