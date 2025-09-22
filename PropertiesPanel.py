@@ -37,7 +37,7 @@ class PropertiesPanel(tk.Toplevel):
         for child in self.winfo_children():
             child.destroy()
 
-        tk.Label(self, text=f"Właściwości: {type(widget).__name__}").pack() #pokazanie nazwy widgetu
+        tk.Label(self, text=f"Właściwości: {type(widget).__name__}").grid(row=0, columnspan=2) #pokazanie nazwy widgetu
         self.fields = {} #inicjalizacja listy atrybutów
 
         widget_type = type(widget).__name__  #ustawienie typu widgetu
@@ -45,14 +45,14 @@ class PropertiesPanel(tk.Toplevel):
         props = WIDGET_PROPERTIES.get(widget_type, {})
         common = WIDGET_PROPERTIES.get("Common", {})
         props.update(common)
-
+        row_number=1
         #wyświetlamy właściwość po właściwości w okienku
         for prop_name, config in props.items():
-            tk.Label(self, text=prop_name).pack() #nazwa właściwości
+            tk.Label(self, text=prop_name+": ").grid(row=row_number, column=0,sticky="e") #nazwa właściwości
             #jeżeli jet to właściwość, którą można wprowadzić w polu edycyjnym
             if config["type"] == "entry":
                 entry = tk.Entry(self) #dodjemy pole typu entry
-                entry.pack()
+                entry.grid(row=row_number, column=1)
 
                 #Tworzy pole tekstowe (entry) i wstawia do niego aktualną wartość właściwości danego widgetu.
                 #config["getter"] to funkcja, która wie, jak pobrać daną właściwość z widgetu.
@@ -69,7 +69,7 @@ class PropertiesPanel(tk.Toplevel):
                 #zmienna przechowująca wartość checkboxa
                 var = tk.BooleanVar(value=config["getter"](widget))
                 checkbox = tk.Checkbutton(self, variable=var) #dodajemy pole typu checkbox
-                checkbox.pack()
+                checkbox.grid(row=row_number, column=1)
                 #wskazujemy setter do ustawiania właściwości - patrz wyżej
                 self.fields[prop_name] = (var, config["setter"])
             # jeżeli jet to właściwość, typu dropdown - rozwijana lista opcji
@@ -80,10 +80,11 @@ class PropertiesPanel(tk.Toplevel):
                 var = tk.StringVar(value=config["getter"](widget))
                 #Tworzy rozwijane menu (OptionMenu) z listą opcji.
                 dropdown = tk.OptionMenu(self, var, *options)
-                dropdown.pack()
+                dropdown.grid(row=row_number, column=1)
                 self.fields[prop_name] = (var, config["setter"])
+            row_number+=1
 
-        tk.Button(self, text="Zastosuj", command=self.apply_changes).pack(pady=10)
+        tk.Button(self, text="Zastosuj", command=self.apply_changes).grid(row=row_number, columnspan=2)
 
     def apply_changes(self):
         for prop_name, (field, setter) in self.fields.items():
