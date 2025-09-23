@@ -4,30 +4,36 @@ import tkinter as tk
 
 WIDGET_PROPERTIES = {
     "Common":{
-        "grid_row": {
+        # "row": {
+        #     "type": "entry",
+        #     "getter": lambda w: getattr(w, "row", 0),
+        #     "setter": lambda w, v: setattr(w, "row", int(v))
+        # },
+        "row":{"type": "entry",
+               "getter": lambda w: w.grid_info()["row"],
+               "setter": lambda w, v: w.grid_configure(row=v)},
+        # "column": {
+        #         "type": "entry",
+        #         "getter": lambda w: getattr(w, "column", 0),
+        #         "setter": lambda w, v: setattr(w, "column", int(v))
+        # },
+        "column": {"type": "entry",
+                   "getter": lambda w: w.grid_info()["column"],
+                   "setter": lambda w, v: w.grid_configure(column=v)},
+        "rowspan": {
             "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_row", 0),
-            "setter": lambda w, v: setattr(w, "_grid_row", int(v))
+            "getter": lambda w: getattr(w, "rowspan", 1),
+            "setter": lambda w, v: setattr(w, "rowspan", int(v))
         },
-        "grid_column": {
-                "type": "entry",
-                "getter": lambda w: getattr(w, "_grid_column", 0),
-                "setter": lambda w, v: setattr(w, "_grid_column", int(v))
-        },
-        "grid_rowspan": {
+        "columnspan": {
             "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_rowspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_rowspan", int(v))
+            "getter": lambda w: getattr(w, "columnspan", 1),
+            "setter": lambda w, v: setattr(w, "columnspan", int(v))
         },
-        "grid_columnspan": {
+        "sticky": {
             "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_columnspan", 1),
-            "setter": lambda w, v: setattr(w, "_grid_columnspan", int(v))
-        },
-        "grid_sticky": {
-            "type": "entry",
-            "getter": lambda w: getattr(w, "_grid_sticky", ""),
-            "setter": lambda w, v: setattr(w, "_grid_sticky", v)
+            "getter": lambda w: getattr(w, "sticky", ""),
+            "setter": lambda w, v: setattr(w, "sticky", v)
         },
         "Parent": {
             "type": "dropdown",

@@ -7,6 +7,7 @@ class PropertiesPanel(tk.Toplevel):
         # do master przekazujemy okno aplikacji (root)
         # do controller przekazywany jest AppController
         super().__init__(master)
+        self.master = master
         self.controller = controller
         self.title("Właściwości")
         #self.geometry("300x200")
@@ -95,9 +96,15 @@ class PropertiesPanel(tk.Toplevel):
             try:
                 # Pobierz wartość z pola (Entry lub Variable)
                 value = field.get() if hasattr(field, "get") else None
-
                 # Zastosuj setter
                 setter(self.selected_widget, value)
+                # if prop_name == "column":
+                #     self.selected_widget.grid_configure(column=value)
+                # elif  prop_name == "row":
+                #     self.selected_widget.grid_configure(row=value)
+                # setattr(self.selected_widget, prop_name, value)
+                # self.master.update_idletasks()
             except Exception as e:
                 print(f"Błąd przy ustawianiu {prop_name}: {e}")
         self.withdraw()
+

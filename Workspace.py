@@ -14,6 +14,16 @@ class Workspace(tk.Frame):
         self.selected_widget = None  # Aktualnie zaznaczony widget
         self._group_vars = {}  # słownik nazw grup → StringVar
         self.containers = [self]  # Workspace jest domyślnym kontenerem
+        self.next_column = 0
+
+    def widget_initial_set(self, widget, column, row):
+        widget.controller = self.controller
+        widget.row = row
+        widget.column = column
+        widget.rowspan = 1
+        widget.columnspan = 1
+        widget.sticky = ""
+        widget._parent_name = "Workspace"
 
     def add_widget(self, widget_type):
         '''metoda dodająca widget do przestrzeni roboczej
@@ -22,10 +32,12 @@ class Workspace(tk.Frame):
         #w zależności od typu komponentu tworzymy odpowiednie widgety z domyślnymi parametrmi
         if widget_type == "Label":
             widget = tk.Label(self, text="Nowy Label", bg="lightyellow")
-            self.widget_initial_set(widget)
-
+            # self.widget_initial_set(widget, self.next_column, 0)
+            # widget.grid(column=self.next_column, row=0)
             # Dodanie nowego widgetu do interfejsu
-            widget.pack(pady=5)
+            self.widget_initial_set(widget, self.next_column, 0)
+            widget.grid(column=self.next_column, row=0)
+            
 
             # Obsługa kliknięcia — zaznaczenie widgetu
             widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
@@ -34,10 +46,11 @@ class Workspace(tk.Frame):
 
         elif widget_type == "Button":
             widget = tk.Button(self, text="Nowy Button")
-            self.widget_initial_set(widget)
+            #self.widget_initial_set(widget)
 
             # Dodanie nowego widgetu do interfejsu
-            widget.pack(pady=5)
+            self.widget_initial_set(widget, self.next_column, 0)
+            widget.grid(column=self.next_column, row=0)
 
             # Obsługa kliknięcia — zaznaczenie widgetu
             widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
@@ -46,10 +59,11 @@ class Workspace(tk.Frame):
 
         elif widget_type == "Entry":
             widget = tk.Entry(self)
-            self.widget_initial_set(widget)
+            #self.widget_initial_set(widget)
 
             # Dodanie nowego widgetu do interfejsu
-            widget.pack(pady=5)
+            self.widget_initial_set(widget, self.next_column, 0)
+            widget.grid(column=self.next_column, row=0)
 
             # Obsługa kliknięcia — zaznaczenie widgetu
             widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
@@ -59,12 +73,13 @@ class Workspace(tk.Frame):
         elif widget_type == "Checkbutton":
             var = tk.BooleanVar(value=False)
             widget = tk.Checkbutton(self, text="Opcja", variable=var)
-            self.widget_initial_set(widget)
+            #self.widget_initial_set(widget)
 
             # zapisz zmienną przechowującą stan (on/off) w obiekcie widgetu
             widget._linked_var = var
             # Dodanie nowego widgetu do interfejsu
-            widget.pack(pady=5)
+            self.widget_initial_set(widget, self.next_column, 0)
+            widget.grid(column=self.next_column, row=0)
 
             # Obsługa kliknięcia — zaznaczenie widgetu
             widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
@@ -73,18 +88,19 @@ class Workspace(tk.Frame):
 
         elif widget_type == "Radiobutton":
             widget = tk.Radiobutton(self, text="Opcja", value="Opcja")
-            self.widget_initial_set(widget)
+            #self.widget_initial_set(widget)
 
             widget._linked_var = tk.StringVar()
             widget.config(variable=widget._linked_var)
             widget.controller = self.controller  # ← dodaj to!
-            widget.pack(pady=5)
+            self.widget_initial_set(widget, self.next_column, 0)
+            widget.grid(column=self.next_column, row=0)
             widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
             self.widgets.append(widget)
 
         elif widget_type == "Frame":
             widget = tk.Frame(self, bg="lightgray", bd=2, relief="groove", width=200, height=100)
-            self.widget_initial_set(widget)
+            #self.widget_initial_set(widget)
 
             widget.pack_propagate(False)  # ← zapobiega automatycznemu dopasowaniu do zawartości
 
@@ -92,13 +108,14 @@ class Workspace(tk.Frame):
             widget._name = f"Frame_{len(self.containers)}"
             # dodaję do listy kontenerów czyli komponentów, na których można osadzać inne widgety
             self.containers.append(widget)
-            widget.pack(pady=5)
+            self.widget_initial_set(widget, self.next_column, 0)
+            widget.grid(column=self.next_column, row=0)
             widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
             self.widgets.append(widget)
 
         elif widget_type == "LabelFrame":
             widget = tk.LabelFrame(self, text="Grupa", bg="lightgray", bd=2, relief="ridge", width=200, height=100)
-            self.widget_initial_set(widget)
+            #self.widget_initial_set(widget)
 
             widget.pack_propagate(False)
 
@@ -106,21 +123,14 @@ class Workspace(tk.Frame):
             widget._name = f"Frame_{len(self.containers)}"
             # dodaję do listy kontenerów czyli komponentów, na których można osadzać inne widgety
             self.containers.append(widget)
-            widget.pack(pady=5)
+            self.widget_initial_set(widget, self.next_column, 0)
+            widget.grid(column=self.next_column, row=0)
             widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
             self.widgets.append(widget)
 
         else:
             return  # nieobsługiwany typ
-
-    def widget_initial_set(self, widget):
-        widget.controller = self.controller
-        widget._grid_row = 0
-        widget._grid_column = 0
-        widget._grid_rowspan = 1
-        widget._grid_columnspan = 1
-        widget._grid_sticky = ""
-        widget._parent_name = "Workspace"
+        self.next_column +=1
 
     def select_widget(self, widget):
         '''Obsługa zdarzenia kliknięcia na widget
@@ -157,15 +167,16 @@ class Workspace(tk.Frame):
 
                 # 🔒 Jeśli kontener to Workspace → użyj pack()
                 if container == self:
-                    widget.pack(pady=5)
+                    self.widget_initial_set(widget, self.next_column, 0)
+                    widget.grid(column=self.next_column, row=0)
                 else:
                     # 🧠 Użyj grid() tylko w kontenerach innych niż Workspace
                     widget.grid(
-                        row=widget._grid_row,
-                        column=widget._grid_column,
-                        rowspan=widget._grid_rowspan,
-                        columnspan=widget._grid_columnspan,
-                        sticky=widget._grid_sticky
+                        row=widget.row,
+                        column=widget.column,
+                        rowspan=widget.rowspan,
+                        columnspan=widget.columnspan,
+                        sticky=widget.sticky
                     )
                 return
 
