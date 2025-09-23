@@ -9,11 +9,12 @@ class PropertiesPanel(tk.Toplevel):
         super().__init__(master)
         self.controller = controller
         self.title("Właściwości")
-        self.geometry("300x200")
+        #self.geometry("300x200")
         #self.protocol("WM_DELETE_WINDOW", self.__callback) #wskazanie metody zamykającej okno - nie pozwala
         # wskazanie metody zamykającej okno - zamiast zamknięcia ukrywa okno właściwości
         self.protocol("WM_DELETE_WINDOW", lambda: self.__callback(self))
         #przy inicjalizacji nie mamy wybranego widgetu stąd none
+
         self.selected_widget = None
         self.fields = {}  # słownik pól właściwości, przy inicjalizacji pusty
 
@@ -39,6 +40,9 @@ class PropertiesPanel(tk.Toplevel):
 
         tk.Label(self, text=f"Właściwości: {type(widget).__name__}").grid(row=0, columnspan=2) #pokazanie nazwy widgetu
         self.fields = {} #inicjalizacja listy atrybutów
+        main_frame = tk.LabelFrame(self, text="Properties", padx=10, pady=7)
+        main_frame.grid(row=1, columnspan=2)
+
 
         widget_type = type(widget).__name__  #ustawienie typu widgetu
         # pobranie do zmiennej props jsona z listą właściwości konkretnego typu widgetu
@@ -48,10 +52,10 @@ class PropertiesPanel(tk.Toplevel):
         row_number=1
         #wyświetlamy właściwość po właściwości w okienku
         for prop_name, config in props.items():
-            tk.Label(self, text=prop_name+": ").grid(row=row_number, column=0,sticky="e") #nazwa właściwości
+            tk.Label(main_frame, text=prop_name+": ").grid(row=row_number, column=0,sticky="e") #nazwa właściwości
             #jeżeli jet to właściwość, którą można wprowadzić w polu edycyjnym
             if config["type"] == "entry":
-                entry = tk.Entry(self) #dodjemy pole typu entry
+                entry = tk.Entry(main_frame) #dodjemy pole typu entry
                 entry.grid(row=row_number, column=1)
 
                 #Tworzy pole tekstowe (entry) i wstawia do niego aktualną wartość właściwości danego widgetu.
@@ -68,7 +72,7 @@ class PropertiesPanel(tk.Toplevel):
             elif config["type"] == "checkbox":
                 #zmienna przechowująca wartość checkboxa
                 var = tk.BooleanVar(value=config["getter"](widget))
-                checkbox = tk.Checkbutton(self, variable=var) #dodajemy pole typu checkbox
+                checkbox = tk.Checkbutton(main_frame, variable=var) #dodajemy pole typu checkbox
                 checkbox.grid(row=row_number, column=1)
                 #wskazujemy setter do ustawiania właściwości - patrz wyżej
                 self.fields[prop_name] = (var, config["setter"])
@@ -79,7 +83,7 @@ class PropertiesPanel(tk.Toplevel):
                 # na podstawie funkcji getter, czyli aktualnej wartości właściwości w edytowanym widgetcie
                 var = tk.StringVar(value=config["getter"](widget))
                 #Tworzy rozwijane menu (OptionMenu) z listą opcji.
-                dropdown = tk.OptionMenu(self, var, *options)
+                dropdown = tk.OptionMenu(main_frame, var, *options)
                 dropdown.grid(row=row_number, column=1)
                 self.fields[prop_name] = (var, config["setter"])
             row_number+=1
