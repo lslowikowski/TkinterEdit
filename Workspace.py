@@ -1,4 +1,7 @@
 import tkinter as tk
+from contextlib import nullcontext
+from enum import nonmember
+
 
 class Workspace(tk.Frame):
     '''klasa definiująca główną przestrzeń roboczą
@@ -108,6 +111,7 @@ class Workspace(tk.Frame):
             widget._name = f"Frame_{len(self.containers)}"
             # dodaję do listy kontenerów czyli komponentów, na których można osadzać inne widgety
             self.containers.append(widget)
+            print(widget.winfo_name())
             self.widget_initial_set(widget, self.next_column, 0)
             widget.grid(column=self.next_column, row=0)
             widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
@@ -157,28 +161,45 @@ class Workspace(tk.Frame):
         widget._linked_var = self._group_vars[group_name]
         widget.config(variable=widget._linked_var)
 
-    def reparent_widget(self, widget, parent_name):
+    def get_parent_container(self, parent_name):
         for container in self.containers:
-            if getattr(container, "_name", "Workspace") == parent_name:
-                widget.grid_forget()
-                widget.pack_forget()
-                widget.master = container
-                widget._parent_name = parent_name
+            # current_name = container.winfo_name()
+            widget_name = container._name
+            if widget_name==parent_name:
+                return container
+        return
 
-                # 🔒 Jeśli kontener to Workspace → użyj pack()
-                if container == self:
-                    self.widget_initial_set(widget, self.next_column, 0)
-                    widget.grid(column=self.next_column, row=0)
-                else:
-                    # 🧠 Użyj grid() tylko w kontenerach innych niż Workspace
-                    widget.grid(
-                        row=widget.row,
-                        column=widget.column,
-                        rowspan=widget.rowspan,
-                        columnspan=widget.columnspan,
-                        sticky=widget.sticky
-                    )
-                return
+    def reparent_widget(self, widget, parent_name):
+        #widget.reparent(parent_name)
+        #widget.grid_forget()
+        parent_widget = self.get_parent_container(parent_name)
+        #parent_name = parent_widget.winfo_name()
+        widget.grid(column=0, row=0, in_=parent_widget)
+        widget._parent_name = parent_name
+
+
+    # def reparent_widget(self, widget, parent_name):
+    #     for container in self.containers:
+    #         if getattr(container, "_name", "Workspace") == parent_name:
+    #             widget.grid_forget()
+    #             widget.pack_forget()
+    #             widget.master = container
+    #             widget._parent_name = parent_name
+    #
+    #             # 🔒 Jeśli kontener to Workspace → użyj pack()
+    #             if container == self:
+    #                 self.widget_initial_set(widget, self.next_column, 0)
+    #                 widget.grid(column=self.next_column, row=0)
+    #             else:
+    #                 # 🧠 Użyj grid() tylko w kontenerach innych niż Workspace
+    #                 widget.grid(
+    #                     row=widget.row,
+    #                     column=widget.column,
+    #                     rowspan=widget.rowspan,
+    #                     columnspan=widget.columnspan,
+    #                     sticky=widget.sticky
+    #                 )
+    #             returned
 
 
 
