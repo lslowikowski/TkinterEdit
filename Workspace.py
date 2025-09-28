@@ -1,140 +1,99 @@
 import tkinter as tk
-from contextlib import nullcontext
-from enum import nonmember
+from WidgetNode import WidgetNode
 
 
 class Workspace(tk.Frame):
     '''klasa definiująca główną przestrzeń roboczą
     Tu będą umieszczane komponenty z klasy ToolBox'''
     def __init__(self, master, controller):
-        '''do master przekazujemy okno aplikacji (root)
-        do controller przekazywany jest AppController'''
         super().__init__(master, bg="white")
         self.controller = controller
-        self.pack(side="right", fill="both", expand=True)
 
-        self.widgets = []  # Lista dodanych widgetów
+        #Stara płaska struktura self.widgets = []  # Wszystkie dodane widgety
+        self._name = "Workspace"
+        self.root_node = WidgetNode(self)  # Workspace jako korzeń
         self.selected_widget = None  # Aktualnie zaznaczony widget
-        self._group_vars = {}  # słownik nazw grup → StringVar
-        self.containers = [self]  # Workspace jest domyślnym kontenerem
-        self.next_column = 0
+        self._group_vars = {}  # Zmienne grupowe dla Radiobuttonów
+        self.containers = [self]  # Lista kontenerów (Workspace + Frame/LabelFrame)
 
-    def widget_initial_set(self, widget, column, row):
+        # Konfiguracja siatki
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+    # @property
+    # def _name(self):
+    #     return self._name
+    #
+    # @_name.setter
+    # def _name(self, var):
+    #     self._name = var
+
+    def widget_initial_set(self, widget, column, row, parent_name):
         widget.controller = self.controller
         widget.row = row
         widget.column = column
         widget.rowspan = 1
         widget.columnspan = 1
         widget.sticky = ""
-        widget._parent_name = "Workspace"
+        widget._parent_name = parent_name
 
-    def add_widget(self, widget_type):
-        '''metoda dodająca widget do przestrzeni roboczej
-        :param self klasa okienka (przestrzeń robocza)
-        :param widget_type typ komponentu, który jest umieszczany wprzestrzeni roboczej'''
-        #w zależności od typu komponentu tworzymy odpowiednie widgety z domyślnymi parametrmi
+    def add_widget(self, widget_type, parent_name="Workspace"):
+        '''Dodaje nowy widget do Workspace'''
+
+        widget = None
         if widget_type == "Label":
             widget = tk.Label(self, text="Nowy Label", bg="lightyellow")
-            # self.widget_initial_set(widget, self.next_column, 0)
-            # widget.grid(column=self.next_column, row=0)
-            # Dodanie nowego widgetu do interfejsu
-            self.widget_initial_set(widget, self.next_column, 0)
-            widget.grid(column=self.next_column, row=0)
-            
-
-            # Obsługa kliknięcia — zaznaczenie widgetu
-            widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
-            # Dodanie do listy
-            self.widgets.append(widget)
 
         elif widget_type == "Button":
             widget = tk.Button(self, text="Nowy Button")
-            #self.widget_initial_set(widget)
-
-            # Dodanie nowego widgetu do interfejsu
-            self.widget_initial_set(widget, self.next_column, 0)
-            widget.grid(column=self.next_column, row=0)
-
-            # Obsługa kliknięcia — zaznaczenie widgetu
-            widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
-            # Dodanie do listy
-            self.widgets.append(widget)
 
         elif widget_type == "Entry":
             widget = tk.Entry(self)
-            #self.widget_initial_set(widget)
-
-            # Dodanie nowego widgetu do interfejsu
-            self.widget_initial_set(widget, self.next_column, 0)
-            widget.grid(column=self.next_column, row=0)
-
-            # Obsługa kliknięcia — zaznaczenie widgetu
-            widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
-            # Dodanie do listy
-            self.widgets.append(widget)
 
         elif widget_type == "Checkbutton":
             var = tk.BooleanVar(value=False)
             widget = tk.Checkbutton(self, text="Opcja", variable=var)
-            #self.widget_initial_set(widget)
-
-            # zapisz zmienną przechowującą stan (on/off) w obiekcie widgetu
             widget._linked_var = var
-            # Dodanie nowego widgetu do interfejsu
-            self.widget_initial_set(widget, self.next_column, 0)
-            widget.grid(column=self.next_column, row=0)
-
-            # Obsługa kliknięcia — zaznaczenie widgetu
-            widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
-            # Dodanie do listy
-            self.widgets.append(widget)
 
         elif widget_type == "Radiobutton":
             widget = tk.Radiobutton(self, text="Opcja", value="Opcja")
-            #self.widget_initial_set(widget)
-
             widget._linked_var = tk.StringVar()
             widget.config(variable=widget._linked_var)
-            widget.controller = self.controller  # ← dodaj to!
-            self.widget_initial_set(widget, self.next_column, 0)
-            widget.grid(column=self.next_column, row=0)
-            widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
-            self.widgets.append(widget)
 
         elif widget_type == "Frame":
-            widget = tk.Frame(self, bg="lightgray", bd=2, relief="groove", width=200, height=100)
-            #self.widget_initial_set(widget)
-
-            widget.pack_propagate(False)  # ← zapobiega automatycznemu dopasowaniu do zawartości
-
-            # Każdy kontener powinien mieć atrybut _name, żeby było wiadomo na czym osadzamy widget
+            widget = tk.Frame(master=self, bg="lightgray", bd=2, relief="groove", width=200, height=100)
+            widget.pack_propagate(False)
             widget._name = f"Frame_{len(self.containers)}"
-            # dodaję do listy kontenerów czyli komponentów, na których można osadzać inne widgety
             self.containers.append(widget)
-            print(widget.winfo_name())
-            self.widget_initial_set(widget, self.next_column, 0)
-            widget.grid(column=self.next_column, row=0)
-            widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
-            self.widgets.append(widget)
 
         elif widget_type == "LabelFrame":
-            widget = tk.LabelFrame(self, text="Grupa", bg="lightgray", bd=2, relief="ridge", width=200, height=100)
-            #self.widget_initial_set(widget)
-
+            widget = tk.LabelFrame(master=self, text="Grupa", bg="lightgray", bd=2, relief="ridge", width=200, height=100)
             widget.pack_propagate(False)
-
-            # Każdy kontener powinien mieć atrybut _name, żeby było wiadomo na czym osadzamy widget
-            widget._name = f"Frame_{len(self.containers)}"
-            # dodaję do listy kontenerów czyli komponentów, na których można osadzać inne widgety
+            widget._name = f"LabelFrame_{len(self.containers)}"
             self.containers.append(widget)
-            self.widget_initial_set(widget, self.next_column, 0)
-            widget.grid(column=self.next_column, row=0)
-            widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
-            self.widgets.append(widget)
 
         else:
-            return  # nieobsługiwany typ
-        self.next_column +=1
+            return  # Nieobsługiwany typ
+
+        # Ustawienia początkowe
+        # self.widget_initial_set(widget, column=len(self.widgets), row=0)
+        self.widget_initial_set(widget, column=0, row=0, parent_name=parent_name)
+
+        # Dodanie do siatki
+        widget.grid(column=widget.column, row=widget.row)
+
+        # Obsługa kliknięcia
+        widget.bind("<Button-1>", lambda e, w=widget: self.select_widget(w))
+
+        # Dodanie do listy
+        #Stara płaska struktura self.widgets.append(widget)
+        parent_node = self.find_node_by_name(parent_name)
+        new_node = WidgetNode(widget, parent=parent_node)
+        parent_node.children.append(new_node)
+
+        # Dodanie do drzewka
+        self.controller.tree_panel.add_widget(widget)
+        # self.next_column +=1
 
     def select_widget(self, widget):
         '''Obsługa zdarzenia kliknięcia na widget
@@ -150,6 +109,9 @@ class Workspace(tk.Frame):
         if self.selected_widget:
             try:
                 self.selected_widget.config({key: value})
+                # Jeśli to kontener → odbuduj gałąź
+                if hasattr(self.selected_widget, "_name"):
+                    self.controller.tree_panel.rebuild_container_branch(self.selected_widget)
             except Exception as e:
                 print(f"Błąd przy aktualizacji właściwości: {e}")
 
@@ -170,40 +132,64 @@ class Workspace(tk.Frame):
         return
 
     def reparent_widget(self, widget, parent_name):
-        #widget.reparent(parent_name)
-        #widget.grid_forget()
+        #--new lines 1 --
+        node = self.find_node_by_widget(widget)
+        old_parent = node.parent
+        old_parent.children.remove(node)
+
+        new_parent = self.find_node_by_name(parent_name)
+        node.parent = new_parent
+        new_parent.children.append(node)
+
         parent_widget = self.get_parent_container(parent_name)
-        #parent_name = parent_widget.winfo_name()
         widget.grid(column=0, row=0, in_=parent_widget)
         widget._parent_name = parent_name
+        widget.grid(
+            column=widget.column,
+            row=widget.row,
+            rowspan=widget.rowspan,
+            columnspan=widget.columnspan,
+            sticky=widget.sticky
+        )
 
+        # Aktualizacja drzewka
+        self.controller.tree_panel.rebuild_tree()
 
-    # def reparent_widget(self, widget, parent_name):
-    #     for container in self.containers:
-    #         if getattr(container, "_name", "Workspace") == parent_name:
-    #             widget.grid_forget()
-    #             widget.pack_forget()
-    #             widget.master = container
-    #             widget._parent_name = parent_name
-    #
-    #             # 🔒 Jeśli kontener to Workspace → użyj pack()
-    #             if container == self:
-    #                 self.widget_initial_set(widget, self.next_column, 0)
-    #                 widget.grid(column=self.next_column, row=0)
-    #             else:
-    #                 # 🧠 Użyj grid() tylko w kontenerach innych niż Workspace
-    #                 widget.grid(
-    #                     row=widget.row,
-    #                     column=widget.column,
-    #                     rowspan=widget.rowspan,
-    #                     columnspan=widget.columnspan,
-    #                     sticky=widget.sticky
-    #                 )
-    #             returned
+    def find_node_by_name(self, name, node=None):
+        if node is None:
+            node = self.root_node
 
+        widget = node.widget
+        widget_name = getattr(widget, "_name", None)
+        if widget_name == name or (widget_name is None and name == "Workspace"):
+            return node
 
+        for child in node.children:
+            result = self.find_node_by_name(name, child)
+            if result:
+                return result
+        return None
 
+    def iter_nodes(self, node=None):
+        if node is None:
+            node = self.root_node
+        yield node
+        for child in node.children:
+            yield from self.iter_nodes(child)
 
+    def find_node_by_widget(self, widget, node=None):
+        '''Znajduje węzeł WidgetNode na podstawie obiektu widget'''
+        if node is None:
+            node = self.root_node
+
+        if node.widget == widget:
+            return node
+
+        for child in node.children:
+            result = self.find_node_by_widget(widget, child)
+            if result:
+                return result
+        return None
 
 
 
